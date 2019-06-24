@@ -1,6 +1,10 @@
-pragma solidity ^0.4.24;
+pragma solidity >=0.4.24;
 // Define a contract 'Supplychain'
-contract SupplyChain {
+
+import "../coffeecore/Ownable.sol";
+import "../coffeeaccesscontrol/FarmerRole.sol";
+// TODO: change farmer and Add the reset
+contract SupplyChain is Ownable, FarmerRole {
 
   // Define 'owner'
   address owner;
