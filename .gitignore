@@ -89,3 +89,10 @@ typings/
 .dynamodb/
 
 # End of https://www.gitignore.io/api/node
+
+## Abdulelah's
+/build
+../build
+**/build
+.DS_Store
+**/.DS_Store

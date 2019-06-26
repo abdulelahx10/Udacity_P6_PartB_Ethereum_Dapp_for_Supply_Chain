@@ -5,16 +5,16 @@ This repository containts an Ethereum DApp that demonstrates a Supply Chain flow
 ## Architecture - UML (Part B)
 
 ### Activity Diagram
-![truffle test](images/Automotive-Supply-Chain-Activity-Diagram.png)
+![Diagram 1](images/Automotive-Supply-Chain-Activity-Diagram.png)
 
 ### Sequence Diagram
-![truffle test](images/Automotive-Supply-Chain-Sequence-Diagram.png)
+![Diagram 2](images/Automotive-Supply-Chain-Sequence-Diagram.png)
 
 ### State Diagram
-![truffle test](images/Automotive-Supply-Chain-State-Diagram.png)
+![Diagram 3](images/Automotive-Supply-Chain-State-Diagram.png)
 
 ### Class Diagram
-![truffle test](images/Automotive-Supply-Chain-Class-Diagram.png)
+![Diagram 4](images/Automotive-Supply-Chain-Class-Diagram.png)
 
 ## User Interface (Remove?)
 The DApp User Interface when running should look like...

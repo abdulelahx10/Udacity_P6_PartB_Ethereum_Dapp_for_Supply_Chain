@@ -7,18 +7,17 @@ contract('SupplyChain', function(accounts) {
     var sku = 1
     var upc = 1
     const ownerID = accounts[0]
-    const originFarmerID = accounts[1]
-    const originFarmName = "John Doe"
-    const originFarmInformation = "Yarray Valley"
-    const originFarmLatitude = "-38.239770"
-    const originFarmLongitude = "144.341490"
+    const originCarFactoryID = accounts[1]
+    const originCarFactoryName = "John Doe"
+    const originCarFactoryInformation = "Yarray Valley"
+    const originCarFactoryLatitude = "-38.239770"
+    const originCarFactoryLongitude = "144.341490"
     var productID = sku + upc
     const productNotes = "Best beans for Espresso"
     const productPrice = web3.toWei(1, "ether")
-    var itemState = 0
-    const distributorID = accounts[2]
-    const retailerID = accounts[3]
-    const consumerID = accounts[4]
+    var carState = 0
+    const dealerID = accounts[2]
+    const consumerID = accounts[3]
     const emptyAddress = '0x00000000000000000000000000000000000000'
 
     ///Available Accounts
@@ -36,205 +35,275 @@ contract('SupplyChain', function(accounts) {
 
     console.log("ganache-cli accounts used here...")
     console.log("Contract Owner: accounts[0] ", accounts[0])
-    console.log("Farmer: accounts[1] ", accounts[1])
-    console.log("Distributor: accounts[2] ", accounts[2])
-    console.log("Retailer: accounts[3] ", accounts[3])
-    console.log("Consumer: accounts[4] ", accounts[4])
+    console.log("CarFactory: accounts[1] ", accounts[1])
+    console.log("Dealer: accounts[2] ", accounts[2])
+    console.log("Consumer: accounts[3] ", accounts[3])
 
     // 1st Test
-    it("Testing smart contract function harvestItem() that allows a farmer to harvest coffee", async() => {
+    it("Testing smart contract function buildCarPart() that allows a CarFactory to build Car Part car", async() => {
         const supplyChain = await SupplyChain.deployed()
-        
+
         // Declare and Initialize a variable for event
         var eventEmitted = false
-        
-        // Watch the emitted event Harvested()
-        var event = supplyChain.Harvested()
+
+        // Watch the emitted event CarPartBuilt()
+        var event = supplyChain.CarPartBuilt()
         await event.watch((err, res) => {
             eventEmitted = true
         })
 
-        // Mark an item as Harvested by calling function harvestItem()
-        await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes)
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
 
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
-        const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
+        // Mark an car as CarPartBuilt by calling function buildCarPart()
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
 
-        // Verify the result set
-        assert.equal(resultBufferOne[0], sku, 'Error: Invalid item SKU')
-        assert.equal(resultBufferOne[1], upc, 'Error: Invalid item UPC')
-        assert.equal(resultBufferOne[2], originFarmerID, 'Error: Missing or Invalid ownerID')
-        assert.equal(resultBufferOne[3], originFarmerID, 'Error: Missing or Invalid originFarmerID')
-        assert.equal(resultBufferOne[4], originFarmName, 'Error: Missing or Invalid originFarmName')
-        assert.equal(resultBufferOne[5], originFarmInformation, 'Error: Missing or Invalid originFarmInformation')
-        assert.equal(resultBufferOne[6], originFarmLatitude, 'Error: Missing or Invalid originFarmLatitude')
-        assert.equal(resultBufferOne[7], originFarmLongitude, 'Error: Missing or Invalid originFarmLongitude')
-        assert.equal(resultBufferTwo[5], 0, 'Error: Invalid item State')
-        assert.equal(eventEmitted, true, 'Invalid event emitted')        
-    })    
-
-    // 2nd Test
-    it("Testing smart contract function processItem() that allows a farmer to process coffee", async() => {
-        const supplyChain = await SupplyChain.deployed()
-        
-        // Declare and Initialize a variable for event
-        
-        
-        // Watch the emitted event Processed()
-        
-
-        // Mark an item as Processed by calling function processtItem()
-        
-
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferOne = await supplyChain.fetchCarBufferOne.call(upc)
+        const resultBufferTwo = await supplyChain.fetchCarBufferTwo.call(upc)
 
         // Verify the result set
-        
-    })    
-
-    // 3rd Test
-    it("Testing smart contract function packItem() that allows a farmer to pack coffee", async() => {
-        const supplyChain = await SupplyChain.deployed()
-        
-        // Declare and Initialize a variable for event
-        
-        
-        // Watch the emitted event Packed()
-        
-
-        // Mark an item as Packed by calling function packItem()
-        
-
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
-
-        // Verify the result set
-        
-    })    
-
-    // 4th Test
-    it("Testing smart contract function sellItem() that allows a farmer to sell coffee", async() => {
-        const supplyChain = await SupplyChain.deployed()
-        
-        // Declare and Initialize a variable for event
-        
-        
-        // Watch the emitted event ForSale()
-        
-
-        // Mark an item as ForSale by calling function sellItem()
-        
-
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
-
-        // Verify the result set
-          
-    })    
-
-    // 5th Test
-    it("Testing smart contract function buyItem() that allows a distributor to buy coffee", async() => {
-        const supplyChain = await SupplyChain.deployed()
-        
-        // Declare and Initialize a variable for event
-        
-        
-        // Watch the emitted event Sold()
-        var event = supplyChain.Sold()
-        
-
-        // Mark an item as Sold by calling function buyItem()
-        
-
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
-
-        // Verify the result set
-        
-    })    
-
-    // 6th Test
-    it("Testing smart contract function shipItem() that allows a distributor to ship coffee", async() => {
-        const supplyChain = await SupplyChain.deployed()
-        
-        // Declare and Initialize a variable for event
-        
-        
-        // Watch the emitted event Shipped()
-        
-
-        // Mark an item as Sold by calling function buyItem()
-        
-
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
-
-        // Verify the result set
-              
-    })    
-
-    // 7th Test
-    it("Testing smart contract function receiveItem() that allows a retailer to mark coffee received", async() => {
-        const supplyChain = await SupplyChain.deployed()
-        
-        // Declare and Initialize a variable for event
-        
-        
-        // Watch the emitted event Received()
-        
-
-        // Mark an item as Sold by calling function buyItem()
-        
-
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
-
-        // Verify the result set
-             
-    })    
-
-    // 8th Test
-    it("Testing smart contract function purchaseItem() that allows a consumer to purchase coffee", async() => {
-        const supplyChain = await SupplyChain.deployed()
-        
-        // Declare and Initialize a variable for event
-        
-        
-        // Watch the emitted event Purchased()
-        
-
-        // Mark an item as Sold by calling function buyItem()
-        
-
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
-
-        // Verify the result set
-        
-    })    
-
-    // 9th Test
-    it("Testing smart contract function fetchItemBufferOne() that allows anyone to fetch item details from blockchain", async() => {
-        const supplyChain = await SupplyChain.deployed()
-
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
-        
-        // Verify the result set:
-        
+        assert.equal(resultBufferOne[0], sku, 'Error: Invalid car SKU')
+        assert.equal(resultBufferOne[1], upc, 'Error: Invalid car UPC')
+        assert.equal(resultBufferOne[2], originCarFactoryID, 'Error: Missing or Invalid ownerID')
+        assert.equal(resultBufferOne[3], originCarFactoryID, 'Error: Missing or Invalid originCarFactoryID')
+        assert.equal(resultBufferOne[4], originCarFactoryName, 'Error: Missing or Invalid originCarFactoryName')
+        assert.equal(resultBufferOne[5], originCarFactoryInformation, 'Error: Missing or Invalid originCarFactoryInformation')
+        assert.equal(resultBufferOne[6], originCarFactoryLatitude, 'Error: Missing or Invalid originCarFactoryLatitude')
+        assert.equal(resultBufferOne[7], originCarFactoryLongitude, 'Error: Missing or Invalid originCarFactoryLongitude')
+        assert.equal(resultBufferTwo[5], 0, 'Error: Invalid car State')
+        assert.equal(eventEmitted, true, 'Invalid event emitted')
     })
 
-    // 10th Test
-    it("Testing smart contract function fetchItemBufferTwo() that allows anyone to fetch item details from blockchain", async() => {
+    // 2nd Test
+    it("Testing smart contract function buildCar() that allows a CarFactory to build car", async() => {
         const supplyChain = await SupplyChain.deployed()
 
-        // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        
-        
+        // Declare and Initialize a variable for event
+        var eventEmitted = false
+
+        // Watch the emitted event CarBuilt()
+        var event = supplyChain.CarBuilt()
+        await event.watch((err, res) => {
+            eventEmitted = true
+        })
+
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
+
+        // Mark an car as Car Built by calling function buildCar()
+        await supplyChain.buildCar(upc, { from: originCarFactoryID })
+
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferTwo = await supplyChain.fetchCarBufferTwo.call(upc)
+
+        // Verify the result set
+        assert.equal(resultBufferTwo[5], 1, 'Error: Invalid car State')
+        assert.equal(eventEmitted, true, 'Invalid event emitted')
+    })
+
+    // 3rd Test
+    it("Testing smart contract function sellCar() that allows a CarFactory to sell car", async() => {
+        const supplyChain = await SupplyChain.deployed()
+
+        // Declare and Initialize a variable for event
+        var eventEmitted = false
+
+        // Watch the emitted event ForSale()
+        var event = supplyChain.ForSale()
+        await event.watch((err, res) => {
+            eventEmitted = true
+        })
+
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
+        await supplyChain.buildCar(upc, { from: originCarFactoryID })
+
+        // Mark an car as ForSale by calling function sellCar()
+        await supplyChain.sellCar(upc, productPrice, { from: originCarFactoryID })
+
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferTwo = await supplyChain.fetchCarBufferTwo.call(upc)
+
+        // Verify the result set
+        assert.equal(resultBufferTwo[5], 2, 'Error: Invalid car State')
+        assert.equal(eventEmitted, true, 'Invalid event emitted')
+    })
+
+    // 4th Test
+    it("Testing smart contract function buyCar() that allows a dealer to buy car", async() => {
+        const supplyChain = await SupplyChain.deployed()
+
+        // Declare and Initialize a variable for event
+        var eventEmitted = false
+
+        // Watch the emitted event Sold()
+        var event = supplyChain.Sold()
+        await event.watch((err, res) => {
+            eventEmitted = true
+        })
+
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
+        await supplyChain.buildCar(upc, { from: originCarFactoryID })
+        await supplyChain.sellCar(upc, productPrice, { from: originCarFactoryID })
+        await supplyChain.addDealer(dealerID)
+
+        // Mark an car as Sold by calling function buyCar()
+        await supplyChain.buyCar(upc, { from: dealerID, value: productPrice })
+
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferTwo = await supplyChain.fetchCarBufferTwo.call(upc)
+
+        // Verify the result set
+        assert.equal(resultBufferTwo[5], 3, 'Error: Invalid car State')
+        assert.equal(eventEmitted, true, 'Invalid event emitted')
+    })
+
+    // 5th Test
+    it("Testing smart contract function shipCar() that allows a dealer to ship car", async() => {
+        const supplyChain = await SupplyChain.deployed()
+
+        // Declare and Initialize a variable for event
+        var eventEmitted = false
+
+        // Watch the emitted event Shipped()
+        var event = supplyChain.Shipped()
+        await event.watch((err, res) => {
+            eventEmitted = true
+        })
+
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
+        await supplyChain.buildCar(upc, { from: originCarFactoryID })
+        await supplyChain.sellCar(upc, productPrice, { from: originCarFactoryID })
+        await supplyChain.addDealer(dealerID)
+        await supplyChain.buyCar(upc, { from: dealerID, value: productPrice })
+
+        // Mark an car as Sold by calling function shipCar()
+        await supplyChain.shipItem(upc, { from: dealerID })
+
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferTwo = await supplyChain.fetchCarBufferTwo.call(upc)
+
+        // Verify the result set
+        assert.equal(resultBufferTwo[5], 4, 'Error: Invalid car State')
+        assert.equal(eventEmitted, true, 'Invalid event emitted')
+    })
+
+    // 6th Test
+    it("Testing smart contract function receiveCar() that allows a dealer to mark car received", async() => {
+        const supplyChain = await SupplyChain.deployed()
+
+        // Declare and Initialize a variable for event
+        var eventEmitted = false
+
+        // Watch the emitted event Received()
+        var event = supplyChain.Received()
+        await event.watch((err, res) => {
+            eventEmitted = true
+        })
+
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
+        await supplyChain.buildCar(upc, { from: originCarFactoryID })
+        await supplyChain.sellCar(upc, productPrice, { from: originCarFactoryID })
+        await supplyChain.addDealer(dealerID)
+        await supplyChain.buyCar(upc, { from: dealerID, value: productPrice })
+        await supplyChain.shipItem(upc, { from: dealerID })
+
+        // Mark an car as Sold by calling function buyCar()
+        await supplyChain.receiveItem(upc, { from: dealerID })
+
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferTwo = await supplyChain.fetchCarBufferTwo.call(upc)
+
+        // Verify the result set
+        assert.equal(resultBufferTwo[5], 5, 'Error: Invalid car State')
+        assert.equal(eventEmitted, true, 'Invalid event emitted')
+    })
+
+    // 7th Test
+    it("Testing smart contract function purchaseCar() that allows a consumer to purchase car", async() => {
+        const supplyChain = await SupplyChain.deployed()
+
+        // Declare and Initialize a variable for event
+        var eventEmitted = false
+
+        // Watch the emitted event Purchased()
+        var event = supplyChain.Purchased()
+        await event.watch((err, res) => {
+            eventEmitted = true
+        })
+
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
+        await supplyChain.buildCar(upc, { from: originCarFactoryID })
+        await supplyChain.sellCar(upc, productPrice, { from: originCarFactoryID })
+        await supplyChain.addDealer(dealerID)
+        await supplyChain.buyCar(upc, { from: dealerID, value: productPrice })
+        await supplyChain.shipItem(upc, { from: dealerID })
+        await supplyChain.receiveItem(upc, { from: dealerID })
+
+        // Mark an car as Sold by calling function buyCar()
+        await supplyChain.purchaseItem(upc, { from: consumerID })
+
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferTwo = await supplyChain.fetchCarBufferTwo.call(upc)
+
+        // Verify the result set
+        assert.equal(resultBufferTwo[5], 6, 'Error: Invalid car State')
+        assert.equal(eventEmitted, true, 'Invalid event emitted')
+    })
+
+    // 8th Test
+    it("Testing smart contract function fetchCarBufferOne() that allows anyone to fetch car details from blockchain", async() => {
+        const supplyChain = await SupplyChain.deployed()
+
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
+
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferOne = await supplyChain.fetchCarBufferOne.call(upc)
+
         // Verify the result set:
-        
+        assert.equal(resultBufferOne[0], sku, 'Error: Invalid car SKU')
+        assert.equal(resultBufferOne[1], upc, 'Error: Invalid car UPC')
+        assert.equal(resultBufferOne[2], originCarFactoryID, 'Error: Missing or Invalid ownerID')
+        assert.equal(resultBufferOne[3], originCarFactoryID, 'Error: Missing or Invalid originCarFactoryID')
+        assert.equal(resultBufferOne[4], originCarFactoryName, 'Error: Missing or Invalid originCarFactoryName')
+        assert.equal(resultBufferOne[5], originCarFactoryInformation, 'Error: Missing or Invalid originCarFactoryInformation')
+        assert.equal(resultBufferOne[6], originCarFactoryLatitude, 'Error: Missing or Invalid originCarFactoryLatitude')
+        assert.equal(resultBufferOne[7], originCarFactoryLongitude, 'Error: Missing or Invalid originCarFactoryLongitude')
+    })
+
+    // 9th Test
+    it("Testing smart contract function fetchCarBufferTwo() that allows anyone to fetch car details from blockchain", async() => {
+        const supplyChain = await SupplyChain.deployed()
+
+        // prerequisite:
+        await supplyChain.addCarFactory(originCarFactoryID)
+        await supplyChain.buildCarPart(upc, originCarFactoryID, originCarFactoryName, originCarFactoryInformation, originCarFactoryLatitude, originCarFactoryLongitude, productNotes, { from: originCarFactoryID })
+
+        // Retrieve the just now saved car from blockchain by calling function fetchCar()
+        const resultBufferTwo = await supplyChain.fetchCarBufferTwo.call(upc)
+
+        // Verify the result set:
+        assert.equal(resultBufferTwo[0], sku, 'Error: Invalid car SKU')
+        assert.equal(resultBufferTwo[1], upc, 'Error: Invalid car UPC')
+        assert.equal(resultBufferTwo[2], productID, 'Error: Missing or Invalid productID')
+        assert.equal(resultBufferTwo[3], productNotes, 'Error: Missing or Invalid productNotes')
+        assert.equal(resultBufferTwo[4], productPrice, 'Error: Missing or Invalid productPrice')
+        assert.equal(resultBufferTwo[5], 0, 'Error: Missing or Invalid car State')
+        assert.equal(resultBufferTwo[6], dealerID, 'Error: Missing or Invalid dealerID')
+        assert.equal(resultBufferTwo[7], consumerID, 'Error: Missing or Invalid consumerID')
     })
 
 });
