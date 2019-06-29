@@ -178,7 +178,7 @@ contract SupplyChain is Ownable, CarFactoryRole, DealerRole, ConsumerRole {
     // Update the appropriate fields
     cars[_upc].carState = State.CarBuilt;
     // Emit the appropriate event
-    emit CarPartBuilt(_upc);
+    emit CarBuilt(_upc);
   }
 
   // Define a function 'sellCar' that allows a CarFactory to mark an car 'ForSale'

@@ -12,5 +12,11 @@
   "license": "",
   "devDependencies": {
     "lite-server": "2.4.0"
+  },
+  "dependencies": {
+    "truffle": "^5.0.25",
+    "truffle-assertions": "^0.9.1",
+    "truffle-hdwallet-provider": "^1.0.12",
+    "web3": "^1.0.0-beta.55"
   }
 }
